@@ -91,9 +91,10 @@ evic|>
 
 ```{r map coordinates}
 # try not to run it, too slow
-evic = evic |>
-  filter(!is.na(longitude))
-mapview(evic, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE)
+evic_24= evic |>
+  filter(year == 2024) |>
+  na.omit()
+mapview(evic_24, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE)
 ```
 
 #### Using UHF
