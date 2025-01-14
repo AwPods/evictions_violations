@@ -89,14 +89,6 @@ evic|>
   
 ```
 
-```{r map coordinates}
-# try not to run it, too slow
-evic_24= evic |>
-  filter(year == 2024) |>
-  na.omit()
-mapview(evic_24, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE)
-```
-
 #### write out the csv
 ```{r csv for evictions}
 write.csv(evic, "./data/evictions_for_Qgis.csv")
