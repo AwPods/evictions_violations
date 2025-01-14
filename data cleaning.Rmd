@@ -14,6 +14,8 @@ library(ggplot2)
 library(patchwork)
 library(knitr)
 library(sf)
+library(lubridate)
+library(stringr)
 ```
 
 
@@ -23,15 +25,28 @@ evic = read.csv("./data/evictions.csv")
 uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
 ```
 
-```{r rename}
+```{r rename and clean}
 evic =janitor::clean_names(evic)
 
 uhf = janitor::clean_names(uhf)
+
+# change date format
+evic$executed_date <- mdy(evic$executed_date)
 ```
 
 #### EDA
 
 ```{r Eviction EDA}
+# eviction by boroughs
+
+citibike |>
+  group_by(year, month,member_casual) |>
+  summarize(number_of_rides = n())|>
+  knitr::kable(col.names = c("year", "month", "member", "number of rides"))
+
+```
+
+```{r time series}
 
 ```
 
