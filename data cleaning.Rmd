@@ -99,7 +99,9 @@ mapview(evic_24, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE
 
 #### Using UHF
 
-```{r merge data}
-# see
+```{r uhf}
+# Mapping with UHF polygons (see the 42 neighborhoods)
+ggplot()+
+  geom_sf(data = uhf)
 ```
 
