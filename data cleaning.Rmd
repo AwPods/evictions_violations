@@ -32,17 +32,27 @@ uhf = janitor::clean_names(uhf)
 
 # change date format
 evic$executed_date <- mdy(evic$executed_date)
+
+# add year to data 
+evic = evic |>
+  mutate(year = format(executed_date, "%Y"))
 ```
 
 #### EDA
 
 ```{r Eviction EDA}
 # eviction by boroughs
+evic |>
+  group_by(borough) |>
+  summarize(Num_evic = n())|>
+  knitr::kable(col.names = c("Borough", "Number of Evictions"))
 
-citibike |>
-  group_by(year, month,member_casual) |>
-  summarize(number_of_rides = n())|>
-  knitr::kable(col.names = c("year", "month", "member", "number of rides"))
+# evictions by year
+
+evic |>
+  group_by(year) |>
+  summarize(num_evic = n()) |>
+  knitr::kable(col.names = c("Year", "Number of Evictions"))
 
 ```
 
