@@ -102,21 +102,63 @@ write.csv(evic_22, "./data/eviction_2022.csv")
 
 #### counting points
 ```{r point count}
-
-#save coordinates
+#save coordinates as geometry
 evic = evic |>
   na.omit()|>
   st_as_sf(coords = c("longitude","latitude"), crs = 4326)
 
-data_sf <- data2 %>% st_as_sf()
-random_long_lat_sf <- random_long_lat %>% 
-  st_as_sf(coords = c("long", "lat"), crs = 4326)
+# transform coordinate reference system
+if (!st_crs(evic) == st_crs(uhf)) {
 
-data_sf_summary <- data_sf %>% 
-  mutate(counts = lengths(st_intersects(., random_long_lat_sf)))
+  # Transform evic to match uhf
 
+  uhf_transform <- st_transform(uhf, st_crs(evic)) 
+} 
+
+# count points within uhf polygons for each year (until 2024)
+uhf_evic_2017 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2017))),
+         year = 2017)
+
+uhf_evic_2018 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2018))),
+         year = 2018)
+
+uhf_evic_2019 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2019))),
+         year = 2019)
+
+uhf_evic_2020 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2020))),
+         year = 2020)
+
+uhf_evic_2021 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2021))),
+         year = 2021)
+
+uhf_evic_2022 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2022))),
+         year = 2022)
+
+uhf_evic_2023 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2023))),
+         year = 2023)
+
+uhf_evic_2024 <- uhf_transform |>
+  na.omit() |>
+  mutate(counts = lengths(st_intersects(geometry, evic |> filter(year == 2024))),
+         year = 2024)
+
+# bind all years together
+uhf_evic = rbind (uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024)
 ```
-
 
 #### Using UHF
 
