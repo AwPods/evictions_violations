@@ -16,7 +16,6 @@ library(knitr)
 library(sf)
 library(lubridate)
 library(stringr)
-library(mapview)
 library(leaflet)
 ```
 
