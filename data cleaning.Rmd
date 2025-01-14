@@ -17,6 +17,7 @@ library(sf)
 library(lubridate)
 library(stringr)
 library(leaflet)
+library(shiny)
 ```
 
 
@@ -203,7 +204,7 @@ leaflet() |>
 leaflet() |>  
   addProviderTiles("CartoDB", group = "CartoDB") |> 
   addProviderTiles("CartoDB.DarkMatterNoLabels", group = "CartoDB - Black") |> 
-  setView(lng = 40.7, lat = -74, zoom = 3) |>  # Coordinates of USA
+  setView(lng = -74.006, lat = 40.7128, zoom = 11) |>  # Coordinates of NYC
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black")) 
 
 
@@ -211,117 +212,120 @@ leaflet() |>
 leaflet() |>  
   addProviderTiles("CartoDB", group = "CartoDB") |> 
   addProviderTiles("CartoDB.DarkMatterNoLabels", group = "CartoDB - Black") |> 
-  setView(lng = -97.53, lat = 38.7946, zoom = 4) |>  # Coordinates of NYC
+  setView(lng = -74.006, lat = 40.7128, zoom = 11) |>  # Coordinates of NYC
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black")) -> map_tiles
+```
 
 
-#### Add choropleth layer ----
+#### Add choropleth layer 
 
+#####
 
+``` {R choropleth}
 # Continious Color palette 
-pal_exp <- colorNumeric("Reds", 
-                     domain = exp$PHlth_Exp,
+pal_uhf_evic <- colorNumeric("Blu", 
+                     domain = uhf$counts,
                      reverse = FALSE)
 
 # Add the layer 
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp(PHlth_Exp),
+              fillColor = ~pal_uhf_evic(counts),
               fillOpacity = 0.7,
-              label = ~County) |> 
-  addLegend(pal = pal_exp,
-            values = exp$PHlth_Exp,
+              label = ~Neighborhood) |> 
+  addLegend(pal = pal_uhf_evic,
+            values = uhf_evic$counts,
             title = "Rate",
             position = "bottomright") 
 
 # A binned color palette
-natural_breaks(k = 5, exp['PHlth_Exp'])
+natural_breaks(k = 5, uhf_evic['counts'])
 
-pal_exp2 <- colorBin(palette = "Reds",             
-                      domain = exp$PHlth_Exp,   
+pal_uhf_evic2 <- colorBin(palette = "Reds",             
+                      domain = uhf_evic$counts,   
                       bins = c(0, 116700, 176900, 297900, 558300, 993900),                     
                       reverse = FALSE)
 
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+              label = ~Neighborhood) |> 
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") 
 
 
 # Add pop-up
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County,
+              label = ~Neighborhood,
               popup = ~paste(
-                             County, 
-                             PHlth_Exp,
+                             Neighborhood, 
+                             counts,
                              PCT_RUR,
                              PCT_POV, 
                              PCT_BA, 
                              PCT_WH )) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") 
 
 
 # Add labels and line breaks 
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County,
+              label = ~Neighborhood,
               popup = ~paste(
-                      "<b>County:</b>", County,"<br>",
+                      "<b>Neighborhood:</b>", Neighborhood,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
-:</b>", PHlth_Exp,"<br>",
+:</b>", counts,"<br>",
                       "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
                       "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
                       "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
                       "<b>Population who are White:</b>", PCT_WH,"%" )) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") 
 
 
 # Add the layer 
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County,
+              label = ~Neighborhood,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>County:</b> ",  County,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
-:</b>", PHlth_Exp,"<br>",
+:</b>", counts,"<br>",
                       "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
                       "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
                       "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
                       "<b>Population who are White:</b>", PCT_WH,"%<br>" ,
                 "</div>")) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") 
 ```
@@ -341,25 +345,25 @@ clusters <- st_transform(clusters, crs = 4326)
 pal_cluster <- colorFactor(palette = c("darkred","darkblue"),
                            domain = clusters$cluster)
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County,
+              label = ~Neighborhood,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>County:</b> ",  County,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
-:</b>", PHlth_Exp,"<br>",
+:</b>", counts,"<br>",
                       "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
                       "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
                       "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
                       "<b>Population who are White:</b>", PCT_WH,"%<br>" ,
                 "</div>")) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") |> 
   addPolygons(data = clusters,
@@ -374,25 +378,25 @@ map_tiles |>
 
 #### Prepare map for export ----
 map_tiles |> 
-  addPolygons(data = exp,
+  addPolygons(data = uhf_evic,
               color = "black",
               weight = 1,
-              fillColor = ~pal_exp2(PHlth_Exp),
+              fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~County,
+              label = ~Neighborhood,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>County:</b> ",  County,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
-:</b>", PHlth_Exp,"<br>",
+:</b>", counts,"<br>",
                       "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
                       "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
                       "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
                       "<b>Population who are White:</b>", PCT_WH,"%<br>" ,
                 "</div>")) |> 
-  addLegend(pal = pal_exp2,
-            values = exp$PHlth_Exp,
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
             title = "Expenditure on Preventative Health Programs",
             position = "bottomright") |> 
   addPolygons(data = clusters,
