@@ -100,8 +100,28 @@ mapview(evic_24, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE
 #### write out the csv
 ```{r csv for evictions}
 write.csv(evic, "./data/evictions_for_Qgis.csv")
+# 2017
+evic_22 = evic |>
+  filter(year == 2022)
+
+# 2018
+evic_22 = evic |>
+  filter(year == 2022)
+
+# 2019
+evic_22 = evic |>
+  filter(year == 2022)
+
+# 2020
+evic_22 = evic |>
+  filter(year == 2022)
+
+# 2021
+evic_22 = evic |>
+  filter(year == 2022)
 
 # 2022 
+
 evic_22 = evic |>
   filter(year == 2022)
 
