@@ -5,7 +5,7 @@ date: 2024-10-14
 output: github_document
 ---
 
-setup
+Setup
 
 ```{r setup, include = FALSE}
 library(tidyverse)
@@ -13,10 +13,25 @@ library(dplyr)
 library(ggplot2)
 library(patchwork)
 library(knitr)
+library(sf)
 ```
 
 
-```{r}
+```{r load evictions data}
+evic = read.csv("./data/evictions.csv")
+
+uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
+```
+
+```{r rename}
+evic =janitor::clean_names(evic)
+
+uhf = janitor::clean_names(uhf)
+```
+
+#### EDA
+
+```{r Eviction EDA}
 
 ```
 
