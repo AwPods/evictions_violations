@@ -16,6 +16,7 @@ library(knitr)
 library(sf)
 library(lubridate)
 library(stringr)
+library(mapview)
 ```
 
 
@@ -48,15 +49,56 @@ evic |>
   knitr::kable(col.names = c("Borough", "Number of Evictions"))
 
 # evictions by year
-
 evic |>
   group_by(year) |>
   summarize(num_evic = n()) |>
   knitr::kable(col.names = c("Year", "Number of Evictions"))
 
+# by both
+evic |>
+  group_by(year, borough) |>
+  summarize(num_evic = n()) |>
+  knitr::kable(col.names = c("Year", "NYC boroughs", "Number of Evictions"))
 ```
 
-```{r time series}
 
+```{r bar graphs}
+# by borough
+evic |>
+  ggplot(aes(x = borough))+
+  geom_bar() +
+  labs(x ="NYC Boroughs",
+        y = "Number of Evictions")
+
+# by year
+evic |>
+  filter(!(year == 2025)) |>
+  ggplot(aes(x = year))+
+  geom_bar() +
+  labs(x = "Year",
+        y = "Number of Evictions")
+
+# Stacked up by borough
+evic|>
+  group_by(year) %>%
+  count(borough) %>%
+  ggplot(aes(x = year, y = n, fill = borough)) +
+  geom_col() +
+  labs(x = "Year",
+       y = "Number of Evictions")
+  
+```
+
+```{r map coordinates}
+# try not to run it, too slow
+evic = evic |>
+  filter(!is.na(longitude))
+mapview(evic, xcol = "longitude", ycol = "latitude", crs = 4269, grid = FALSE)
+```
+
+#### Using UHF
+
+```{r merge data}
+# see
 ```
 
