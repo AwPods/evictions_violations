@@ -219,7 +219,6 @@ leaflet() |>
 
 #### Add choropleth layer 
 
-#####
 
 ``` {R choropleth}
 # Continious Color palette 
