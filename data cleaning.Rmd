@@ -246,9 +246,9 @@ map_tiles |>
 # A binned color palette
 natural_breaks(k = 5, uhf_evic['counts'])
 
-pal_uhf_evic2 <- colorBin(palette = "Reds",             
+pal_uhf_evic2 <- colorBin(palette = "Blu",             
                       domain = uhf_evic$counts,   
-                      bins = c(0, 116700, 176900, 297900, 558300, 993900),                     
+                      bins = c(0, 103, 288, 542, 863, 1189),                     
                       reverse = FALSE)
 
 map_tiles |> 
@@ -260,7 +260,7 @@ map_tiles |>
               label = ~Neighborhood) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") 
 
 
@@ -281,7 +281,7 @@ map_tiles |>
                              PCT_WH )) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") 
 
 
@@ -304,7 +304,7 @@ map_tiles |>
                       "<b>Population who are White:</b>", PCT_WH,"%" )) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") 
 
 
@@ -329,7 +329,7 @@ map_tiles |>
                 "</div>")) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") 
 ```
 
@@ -367,7 +367,7 @@ map_tiles |>
                 "</div>")) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") |> 
   addPolygons(data = clusters,
              color = ~pal_cluster(cluster),
@@ -376,7 +376,7 @@ map_tiles |>
              popup = ~paste(cluster, "<br>"),
              group = "Clusters") |> 
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black"),
-                   overlayGroups = c("Expenditure on Preventative Health Programs", "Clusters"), 
+                   overlayGroups = c("Number of Evictions", "Clusters"), 
                    options = layersControlOptions(collapsed = FALSE))
 
 #### Prepare map for export ----
@@ -400,7 +400,7 @@ map_tiles |>
                 "</div>")) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Expenditure on Preventative Health Programs",
+            title = "Number of Evictions",
             position = "bottomright") |> 
   addPolygons(data = clusters,
              color = ~pal_cluster(cluster),
@@ -409,7 +409,7 @@ map_tiles |>
              popup = ~paste(cluster, "<br>"),
              group = "Clusters") |> 
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black"),
-                   overlayGroups = c("Expenditure on Preventative Health Programs", "Clusters"), 
+                   overlayGroups = c("Number of Evictions", "Clusters"), 
                    options = layersControlOptions(collapsed = FALSE)) -> Section4_map
 
 # Save interactive maps 
