@@ -204,7 +204,7 @@ leaflet() |>
 leaflet() |>  
   addProviderTiles("CartoDB", group = "CartoDB") |> 
   addProviderTiles("CartoDB.DarkMatterNoLabels", group = "CartoDB - Black") |> 
-  setView(lng = -74.006, lat = 40.7128, zoom = 11) |>  # Coordinates of NYC
+  setView(lng = -74.006, lat = 40.7128, zoom = 10) |>  # Coordinates of NYC
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black")) 
 
 
@@ -212,7 +212,7 @@ leaflet() |>
 leaflet() |>  
   addProviderTiles("CartoDB", group = "CartoDB") |> 
   addProviderTiles("CartoDB.DarkMatterNoLabels", group = "CartoDB - Black") |> 
-  setView(lng = -74.006, lat = 40.7128, zoom = 11) |>  # Coordinates of NYC
+  setView(lng = -74.006, lat = 40.7128, zoom = 10) |>  # Coordinates of NYC
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black")) -> map_tiles
 ```
 
