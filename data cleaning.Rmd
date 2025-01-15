@@ -18,6 +18,10 @@ library(lubridate)
 library(stringr)
 library(leaflet)
 library(shiny)
+library(leaflet.extras)
+library(htmlwidgets)
+library(rgeoda)
+library(RColorBrewer)
 ```
 
 
