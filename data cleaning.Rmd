@@ -231,38 +231,21 @@ leaflet() |>
 pal_uhf_evic <- colorNumeric("Blu", 
                      domain = uhf_evic$counts,
                      reverse = FALSE)
+# List of datasets
+years <- 2017:2024
+datasets <- lapply(years, function(year) get(paste0("uhf_evic_", year)))
 
-pal_uhf_evic_2017 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2017$counts,
-                     reverse = FALSE)
+# Generate color palettes dynamically
+palettes <- lapply(datasets, function(data) {
+  colorNumeric("Blu", domain = data$counts, reverse = FALSE)
+})
 
-pal_uhf_evic_2018 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2018$counts,
-                     reverse = FALSE)
+# Assign palettes to variables dynamically
+names(palettes) <- paste0("pal_uhf_evic_", years)
+list2env(palettes, envir = .GlobalEnv)  # Export palettes to global environment
 
-pal_uhf_evic_2019 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2019$counts,
-                     reverse = FALSE)
+###########
 
-pal_uhf_evic_2020 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2020$counts,
-                     reverse = FALSE)
-
-pal_uhf_evic_2021 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2021$counts,
-                     reverse = FALSE)
-
-pal_uhf_evic_2022 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2022$counts,
-                     reverse = FALSE)
-
-pal_uhf_evic_2023 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2023$counts,
-                     reverse = FALSE)
-
-pal_uhf_evic_2024 <- colorNumeric("Blu", 
-                     domain = uhf_evic_2024$counts,
-                     reverse = FALSE)
 # Add the layer 
 map_tiles |> 
   addPolygons(data = uhf_evic,
@@ -290,7 +273,7 @@ map_tiles |>
 
 ####
 
-# Add layers for the two datasets
+# Add layers for all years (2017 - 2024, and all years)
 map_tiles <- map_tiles |>
   addPolygons(data = uhf_evic,
               group = "Total Evictions (2017 - 2024)",
@@ -355,51 +338,111 @@ map_tiles <- map_tiles |>
               fillColor = ~pal_uhf_evic_2024(counts),
               fillOpacity = 0.7,
               label = ~uhf_neigh) |> 
-  
+# add legend
    addLegend(pal = pal_uhf_evic,
             values = uhf_evic$counts,
             title = "Number of Evictions",
             position = "bottomright") |> 
-  addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2017,
             values = uhf_evic_2017$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2017",
             position = "bottomright") |> 
-  addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2018,
             values = uhf_evic_2018$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2018",
             position = "bottomright") |> 
-  addLegend(pal = pal_uhf_evic,
-            values = uhf_evic_2019counts,
-            title = "Number of Evictions",
+  addLegend(pal = pal_uhf_evic_2019,
+            values = uhf_evic_2019$counts,
+            title = "Number of Evictions 2019",
             position = "bottomright") |> 
-  addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2020,
             values = uhf_evic_2020$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2020",
             position = "bottomright") |> 
-    addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2021,
             values = uhf_evic_2021$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2021",
             position = "bottomright") |> 
-    addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2022,
             values = uhf_evic_2022$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2022",
             position = "bottomright") |> 
-    addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2023,
             values = uhf_evic_2023$counts,
-            title = "Number of Evictions",
+            title = "Number of Evictions 2023",
             position = "bottomright") |> 
-    addLegend(pal = pal_uhf_evic,
+  addLegend(pal = pal_uhf_evic_2024,
             values = uhf_evic_2024$counts,
-            title = "Number of Evictions",
-            position = "bottomright") |> 
+            title = HTML("<span style='font-size:14px;'>Number of Evictions 2024</span>"),
+            position = "bottomright") |>
   
   addLayersControl(
     baseGroups = c("Total Evictions (2017 - 2024)", "Evictions 2017", "Evictions 2018", "Evictions 2019", "Evictions 2020", "Evictions 2021", "Evictions 2022", "Evictions 2023", "Evictions 2024"),
     options = layersControlOptions(collapsed = FALSE)
-  )
+  ) |>
+
+hideGroup(c("Total Evictions (2017 - 2024)", "Evictions 2017", "Evictions 2018", "Evictions 2019", "Evictions 2020", "Evictions 2021", "Evictions 2022", "Evictions 2023", "Evictions 2024"))
+
 
 map_tiles
 ####
+
+
+#############
+# Add polygons for each year with grouped legends
+years <- 2017:2024
+
+for (year in years) {
+  map_tiles <- map_tiles |>
+    addPolygons(
+      data = get(paste0("uhf_evic_", year)),  # Dynamically get the dataset
+      group = paste0("Evictions ", year),
+      color = "white",
+      weight = 1,
+      fillColor = ~get(paste0("pal_uhf_evic_", year))(counts),  # Dynamic palette
+      fillOpacity = 0.7,
+      label = ~uhf_neigh
+    ) |>
+    addLegend(
+      pal = get(paste0("pal_uhf_evic_", year)),
+      values = get(paste0("uhf_evic_", year))$counts,
+      title = HTML(paste0("<span style='font-size:14px;'>Number of Evictions ", year, "</span>")),
+      position = "bottomright",
+      group = paste0("Evictions ", year)
+    )
+}
+
+# Add polygons for total evictions
+map_tiles <- map_tiles |>
+  addPolygons(
+    data = uhf_evic,
+    group = "Total Evictions (2017 - 2024)",
+    color = "white",
+    weight = 1,
+    fillColor = ~pal_uhf_evic(counts),
+    fillOpacity = 0.7,
+    label = ~Neighborhood
+  ) |>
+  addLegend(
+    pal = pal_uhf_evic,
+    values = uhf_evic$counts,
+    title = "Number of Evictions (2017 - 2024)",
+    position = "bottomright",
+    group = "Total Evictions (2017 - 2024)"
+  )
+
+# Add layer control
+map_tiles <- map_tiles |>
+  addLayersControl(
+    baseGroups = c("Total Evictions (2017 - 2024)", paste0("Evictions ", years)),
+    options = layersControlOptions(collapsed = FALSE)
+  ) |>
+  hideGroup(c("Total Evictions (2017 - 2024)", paste0("Evictions ", years)))
+
+# Render map
+map_tiles
+
+#################
 
 # Generate equal quantiles (5 classes)
 quantile_breaks <- classIntervals(uhf_evic$counts, n = 5, style = "quantile")
