@@ -299,16 +299,16 @@ for (year in years) {
 }
 
 # adding polygons
-map_tiles |> 
+map_tiles = map_tiles |> 
   addPolygons(data = uhf_evic,
               color = "white",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~Neighborhood) |> 
+              label = ~uhf_neigh) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Number of Evictions",
+            title = "Total Evictions",
             position = "bottomright") 
 
 
