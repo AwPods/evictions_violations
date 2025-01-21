@@ -409,7 +409,6 @@ for (year in years) {
     )
 }
 
-
 # Add layer controls and hide all groups initially
 map_tiles = map_tiles |>
   addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black"),
