@@ -313,26 +313,7 @@ map_tiles = map_tiles |>
 
 
 # Add pop-up
-map_tiles |> 
-  addPolygons(data = uhf_evic,
-              color = "white",
-              weight = 1,
-              fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
-              label = ~Neighborhood,
-              popup = ~paste(
-                             uhf_neigh, 
-                             counts,
-                             year
-                             )) |> 
-  addLegend(pal = pal_uhf_evic2,
-            values = uhf_evic$counts,
-            title = "Number of Evictions",
-            position = "bottomright") 
-
-
-# Add labels and line breaks 
-map_tiles |> 
+map_tiles = map_tiles |> 
   addPolygons(data = uhf_evic,
               color = "white",
               weight = 1,
@@ -340,10 +321,28 @@ map_tiles |>
               fillOpacity = 0.7,
               label = ~uhf_neigh,
               popup = ~paste(
-                      "<b>Borough:</b>", borough, "<br>",
-                      "<b>Neighborhood:</b>", uhf_neigh,"<br>",
-                      "<b>Number of Evictions:</b>", counts,"<br>",
-                      )) |> 
+                             uhf_neigh, 
+                             counts,
+                             year
+                             )) |> 
+  addLegend(pal = pal_uhf_evic2,
+            values = uhf_evic$counts,
+            title = "Total Evictions",
+            position = "bottomright") 
+
+
+# Add labels and line breaks 
+map_tiles = map_tiles |> 
+  addPolygons(data = uhf_evic,
+              color = "white",
+              weight = 1,
+              fillColor = ~pal_uhf_evic2(counts),
+              fillOpacity = 0.7,
+              label = ~uhf_neigh,
+              popup = ~paste(
+      "<b>Borough:</b>", borough, "<br>",
+      "<b>Neighborhood:</b>", uhf_neigh, "<br>",
+      "<b>Number of Evictions:</b>", counts, "<br>")) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
             title = "Total Evictions",
