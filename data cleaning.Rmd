@@ -247,15 +247,13 @@ map_tiles <- map_tiles |>
   ) 
 
 # Add layer controls and hide all groups initially
-map_tiles <- map_tiles |>
-  addLayersControl(
-    baseGroups = c("Total Evictions", paste0("Evictions ", years)),  # Add all layers to control
-    options = layersControlOptions(collapsed = FALSE)
-  ) |>
-  hideGroup(c("Total Evictions", paste0("Evictions ", years)))  # Hide all layers and legends initially
-
-# Render the map
-map_tiles
+map_tiles = map_tiles |>
+  addLayersControl(baseGroups = c("CartoDB", "CartoDB - Black"),
+                   overlayGroups =  c("Total Evictions", paste0("Evictions ", years)),  
+                   # Add all layers to control
+    options = layersControlOptions(collapsed = FALSE)) |>
+    hideGroup(c("Total Evictions", paste0("Evictions ", years)))  
+# Hide all layers and legends initially
 
 ```
 
