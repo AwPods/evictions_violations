@@ -321,7 +321,7 @@ map_tiles |>
               fillOpacity = 0.7,
               label = ~Neighborhood,
               popup = ~paste(
-                             Neighborhood, 
+                             uhf_neigh, 
                              counts,
                              year
                              )) |> 
@@ -357,10 +357,10 @@ map_tiles |>
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~Neighborhood,
+              label = ~uhf_neigh,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  uhf_neigh,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
 :</b>", counts,"<br>",
@@ -439,10 +439,10 @@ map_tiles |>
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~Neighborhood,
+              label = ~uhf_neigh,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  uhf_neigh,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
 :</b>", counts,"<br>",
@@ -472,10 +472,10 @@ map_tiles |>
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~Neighborhood,
+              label = ~uhf_neigh,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  Neighborhood,"<br>",
+                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  uhf_neigh,"<br>",
                       "<b>Expenditures on Preventative Health Programs
 
 :</b>", counts,"<br>",
