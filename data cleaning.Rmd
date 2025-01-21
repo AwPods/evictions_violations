@@ -259,12 +259,13 @@ map_tiles = map_tiles |>
     )
 
 # Add layers control and hide all layers/legends initially
+
 map_tiles <- map_tiles |>
   addLayersControl(
-    baseGroups = paste0("Evictions ", years),
+    baseGroups = paste0("Evictions ", years),  # Add all layers to the control
     options = layersControlOptions(collapsed = FALSE)
   ) |>
-  hideGroup(paste0("Evictions ", years))# Hide all layers and legends initially
+  hideGroup(paste0("Evictions ", years))  # Hide all layers (and their legends) initially
 
 
 
