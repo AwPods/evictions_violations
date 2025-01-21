@@ -223,14 +223,18 @@ leaflet() |>
 
 
 #### Add choropleth layer 
+### need to tailor for each year and then make different layer for each
 
 
 ``` {R choropleth}
 # Continious Color palette 
 pal_uhf_evic <- colorNumeric("Blu", 
-                     domain = uhf$counts,
+                     domain = uhf_evic$counts,
                      reverse = FALSE)
 
+pal_uhf_evic——2016 <- colorNumeric("Blu", 
+                     domain = uhf_evic$counts,
+                     reverse = FALSE)
 # Add the layer 
 map_tiles |> 
   addPolygons(data = uhf_evic,
@@ -282,10 +286,8 @@ map_tiles |>
               popup = ~paste(
                              Neighborhood, 
                              counts,
-                             PCT_RUR,
-                             PCT_POV, 
-                             PCT_BA, 
-                             PCT_WH )) |> 
+                             year
+                             )) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
             title = "Number of Evictions",
@@ -301,14 +303,10 @@ map_tiles |>
               fillOpacity = 0.7,
               label = ~Neighborhood,
               popup = ~paste(
+                      "<b>Borough:</b>", Borough, "<br>",
                       "<b>Neighborhood:</b>", Neighborhood,"<br>",
-                      "<b>Expenditures on Preventative Health Programs
-
-:</b>", counts,"<br>",
-                      "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
-                      "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
-                      "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
-                      "<b>Population who are White:</b>", PCT_WH,"%" )) |> 
+                      "<b>Number of Evictions:</b>", counts,"<br>",
+                      )) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
             title = "Number of Evictions",
