@@ -420,8 +420,8 @@ map_tiles |>
                    options = layersControlOptions(collapsed = FALSE)) -> Section4_map
 
 # Save interactive maps 
-saveWidget(Section4_map,
-           file = "Section4_map.html")
+saveWidget(eviction,
+           file = "eviction_choropleth.html")
 
 
 ```
