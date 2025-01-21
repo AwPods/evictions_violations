@@ -138,7 +138,7 @@ for (year in years) {
 
 # bind all years together
 uhf_evic = rbind (uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024) |>
-  group_by(uhf_neigh) |>
+  group_by(borough, uhf_neigh) |>
   summarize(counts = mean(counts, na.rm=TRUE))
 
 # check coordinate referencce system
@@ -334,19 +334,19 @@ map_tiles |>
 # Add labels and line breaks 
 map_tiles |> 
   addPolygons(data = uhf_evic,
-              color = "black",
+              color = "white",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
-              label = ~Neighborhood,
+              label = ~uhf_neigh,
               popup = ~paste(
-                      "<b>Borough:</b>", Borough, "<br>",
-                      "<b>Neighborhood:</b>", Neighborhood,"<br>",
+                      "<b>Borough:</b>", borough, "<br>",
+                      "<b>Neighborhood:</b>", uhf_neigh,"<br>",
                       "<b>Number of Evictions:</b>", counts,"<br>",
                       )) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
-            title = "Number of Evictions",
+            title = "Total Evictions",
             position = "bottomright") 
 
 
