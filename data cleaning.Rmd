@@ -232,15 +232,7 @@ for (year in years) {
       fillColor = ~current_palette(counts),  # Corrected palette usage
       fillOpacity = 0.7,
       label = ~uhf_neigh
-    ) |>
-    addLegend(
-      pal = current_palette,  # Use the palette for the current year
-      values = current_data$counts,  # Values from the current dataset
-      title = HTML(paste0("<span style='font-size:10px;'>Number of Evictions ", year, "</span>")),
-      position = "bottomright",
-      group = paste0("Evictions ", year)
-    )
-}
+    ) }
 
 # Add the total evictions layer and legend
 map_tiles <- map_tiles |>
@@ -252,14 +244,7 @@ map_tiles <- map_tiles |>
     fillColor = ~pal_uhf_evic(counts),
     fillOpacity = 0.7,
     label = ~uhf_neigh
-  ) |>
-  addLegend(
-    pal = pal_uhf_evic,
-    values = uhf_evic$counts,
-    title = HTML("<span style='font-size:10px;'>Total Number of Evictions</span>"),
-    position = "bottomleft",
-    group = "Total Evictions"  # Link the legend to the total evictions layer
-  )
+  ) 
 
 # Add layer controls and hide all groups initially
 map_tiles <- map_tiles |>
@@ -277,26 +262,48 @@ map_tiles
 ```{r generate quantiles}
 # Generate equal quantiles (5 classes)
 
+# Loop through years to create quantile breaks for each year
 for (year in years) {
-  assign(paste0("quantile_breaks", year)) = classintervals(paste0("uhf_evic_", year)$counts, n=5, style = "quantile")
+  assign(
+    paste0("quantile_breaks_", year),
+    classIntervals(
+      get(paste0("uhf_evic_", year))$counts,  # Dynamically access the dataset
+      n = 5,  # Number of quantile breaks
+      style = "quantile"  # Quantile style
+    )
+  )
 }
-
 
 quantile_breaks <- classIntervals(uhf_evic$counts, n = 5, style = "quantile")
 
-# View the break points
-print(quantile_breaks$brks)
 
-# 0.0   22.0   77.4  161.0  342.6 1189.0
 
 pal_uhf_evic2 <- colorBin(palette = "Blu",             
                       domain = uhf_evic$counts,   
-                      bins = c(0.0, 22.0,  77.4, 161.0, 342.6, 1189.0),                     
+                      bins = c(18.50,  79.43333, 125.90, 177.93333, 316.23333, 630.16667),        
                       reverse = FALSE)
 
+# Loop through years and generate color bins
+for (year in years) {
+  # Retrieve the quantile breaks for the current year
+  quantile_breaks <- get(paste0("quantile_breaks_", year))$brks
+  
+  # Create the color bin palette dynamically
+  assign(
+    paste0("pal_uhf_evic_2_", year),
+    colorBin(
+      palette = "Blu",
+      domain = get(paste0("uhf_evic_", year))$counts,  # Counts for the year
+      bins = quantile_breaks,  # Quantile breaks
+      reverse = FALSE
+    )
+  )
+}
+
+# adding polygons
 map_tiles |> 
   addPolygons(data = uhf_evic,
-              color = "black",
+              color = "white",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
@@ -310,7 +317,7 @@ map_tiles |>
 # Add pop-up
 map_tiles |> 
   addPolygons(data = uhf_evic,
-              color = "black",
+              color = "white",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
               fillOpacity = 0.7,
@@ -368,6 +375,50 @@ map_tiles |>
             values = uhf_evic$counts,
             title = "Number of Evictions",
             position = "bottomright") 
+
+
+########
+
+# Loop through years to dynamically add polygons and legends
+for (year in years) {
+  # Get the dataset and palette for the current year
+  current_data <- get(paste0("uhf_evic_", year))
+  current_palette <- get(paste0("pal_uhf_evic_2_", year))
+  
+  # Add polygons, legend, and pop-ups for the current year
+  map_tiles <- map_tiles |>
+    addPolygons(
+      data = current_data,
+      group = paste0("Evictions ", year),  # Group for this year's layer
+      color = "white",  # White border for polygons
+      weight = 1,
+      fillColor = ~current_palette(counts),  # Use the current year's palette
+      fillOpacity = 0.7,
+      label = ~uhf_neigh,
+      popup = ~paste(
+        "<b>Borough:</b>", borough, "<br>",
+        "<b>Neighborhood:</b>", uhf_neigh, "<br>",
+        "<b>Number of Evictions:</b>", counts, "<br>",
+        "<b>Year:</b>", year
+      )
+    ) |>
+    addLegend(
+      pal = current_palette,  # Use the current year's palette for the legend
+      values = current_data$counts,
+      title = HTML(paste0("<span style='font-size:14px;'>Number of Evictions ", year, "</span>")),
+      position = "bottomleft",
+      group = paste0("Evictions ", year)  # Link the legend to the corresponding layer
+    )
+}
+
+# Add layer controls and hide all groups initially
+map_tiles <- map_tiles |>
+  addLayersControl(
+    baseGroups = c("Total Evictions", paste0("Evictions ", years)),  # Add all layers to control
+    options = layersControlOptions(collapsed = FALSE)
+  ) |>
+  hideGroup(c("Total Evictions", paste0("Evictions ", years)))  # Hide all layers and legends initially
+
 ```
 
 ## Layer 2: Display statistically significant High-High and Low-Low clusters
