@@ -205,10 +205,17 @@ pal_uhf_evic <- colorNumeric("Blu",
                      reverse = FALSE)
 
 
-# Create a named list of datasets
-datasets <- lapply(years, function(year) get(paste0("uhf_evic_", year)))
-names(datasets) <- paste0("uhf_evic_", years)
 
+datasets <- lapply(years, function(year) get(paste0("uhf_evic_", year)))
+
+# Generate color palettes dynamically
+palettes <- lapply(datasets, function(data) {
+  colorNumeric("Blu", domain = data$counts, reverse = FALSE)
+})
+
+# Assign palettes to variables dynamically
+names(palettes) <- paste0("pal_uhf_evic_", years)
+list2env(palettes, envir = .GlobalEnv) 
   
 for (year in years) {
   # Get the dataset and palette for the current year
@@ -229,12 +236,11 @@ for (year in years) {
     addLegend(
       pal = current_palette,  # Use the palette for the current year
       values = current_data$counts,  # Values from the current dataset
-      title = HTML(paste0("<span style='font-size:14px;'>Number of Evictions ", year, "</span>")),
+      title = HTML(paste0("<span style='font-size:10px;'>Number of Evictions ", year, "</span>")),
       position = "bottomright",
       group = paste0("Evictions ", year)
     )
 }
-
 
 # Add the total evictions layer and legend
 map_tiles <- map_tiles |>
