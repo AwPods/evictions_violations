@@ -230,7 +230,7 @@ for (year in years) {
       color = "white",
       weight = 1,
       fillColor = ~current_palette(counts),  # Corrected palette usage
-      fillOpacity = 0.7,
+      fillOpacity = 1,
       label = ~uhf_neigh
     ) }
 
@@ -242,7 +242,7 @@ map_tiles <- map_tiles |>
     color = "white",
     weight = 1,
     fillColor = ~pal_uhf_evic(counts),
-    fillOpacity = 0.7,
+    fillOpacity = 1,
     label = ~uhf_neigh
   ) 
 
@@ -298,46 +298,14 @@ for (year in years) {
   )
 }
 
-# adding polygons
+# Add labels and line breaks to total evictions
 map_tiles = map_tiles |> 
   addPolygons(data = uhf_evic,
+              group = "Total Evictions",
               color = "white",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
-              label = ~uhf_neigh) |> 
-  addLegend(pal = pal_uhf_evic2,
-            values = uhf_evic$counts,
-            title = "Total Evictions",
-            position = "bottomright") 
-
-
-# Add pop-up
-map_tiles = map_tiles |> 
-  addPolygons(data = uhf_evic,
-              color = "white",
-              weight = 1,
-              fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
-              label = ~uhf_neigh,
-              popup = ~paste(
-                             uhf_neigh, 
-                             counts,
-                             year
-                             )) |> 
-  addLegend(pal = pal_uhf_evic2,
-            values = uhf_evic$counts,
-            title = "Total Evictions",
-            position = "bottomright") 
-
-
-# Add labels and line breaks 
-map_tiles = map_tiles |> 
-  addPolygons(data = uhf_evic,
-              color = "white",
-              weight = 1,
-              fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
+              fillOpacity = 1,
               label = ~uhf_neigh,
               popup = ~paste(
       "<b>Borough:</b>", borough, "<br>",
@@ -348,35 +316,10 @@ map_tiles = map_tiles |>
             title = "Total Evictions",
             position = "bottomright") 
 
-
-# Add the layer 
-map_tiles |> 
-  addPolygons(data = uhf_evic,
-              color = "black",
-              weight = 1,
-              fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
-              label = ~uhf_neigh,
-              popup = ~paste(
-                "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
-                "<div style='font-size: 12px; font-weight: bold; color: #d9534f;'><b>Neighborhood:</b> ",  uhf_neigh,"<br>",
-                      "<b>Expenditures on Preventative Health Programs
-
-:</b>", counts,"<br>",
-                      "<b>Population who reside in rural places:</b>", PCT_RUR,"%<br>",
-                      "<b>Population falls under the poverty line:</b>", PCT_POV,"%<br>",
-                      "<b>Population with BA degrees:</b>", PCT_BA,"%<br>",
-                      "<b>Population who are White:</b>", PCT_WH,"%<br>" ,
-                "</div>")) |> 
-  addLegend(pal = pal_uhf_evic2,
-            values = uhf_evic$counts,
-            title = "Number of Evictions",
-            position = "bottomright") 
-
-
 ########
 
 # Loop through years to dynamically add polygons and legends
+
 for (year in years) {
   # Get the dataset and palette for the current year
   current_data <- get(paste0("uhf_evic_", year))
@@ -390,7 +333,7 @@ for (year in years) {
       color = "white",  # White border for polygons
       weight = 1,
       fillColor = ~current_palette(counts),  # Use the current year's palette
-      fillOpacity = 0.7,
+      fillOpacity = 1,
       label = ~uhf_neigh,
       popup = ~paste(
         "<b>Borough:</b>", borough, "<br>",
@@ -437,7 +380,7 @@ map_tiles |>
               color = "black",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
+              fillOpacity = 1,
               label = ~uhf_neigh,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
@@ -470,7 +413,7 @@ map_tiles |>
               color = "black",
               weight = 1,
               fillColor = ~pal_uhf_evic2(counts),
-              fillOpacity = 0.7,
+              fillOpacity = 1,
               label = ~uhf_neigh,
               popup = ~paste(
                 "<div style='font-family: Roboto; font-size: 12px; line-height: 1.4;'>",
