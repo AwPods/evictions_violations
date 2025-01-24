@@ -197,7 +197,7 @@ leaflet() |>
 #### Add choropleth layer 
 ### need to tailor for each year and then make different layer for each
 
-
+##### no need to run this chunk, if different method of statistics is needed, then run this chunk to modify codes. 
 ``` {R choropleth}
 # palatte for total evictions
 pal_uhf_evic <- colorNumeric("Reds", 
@@ -313,6 +313,7 @@ map_tiles = map_tiles |>
       "<b>Number of Evictions:</b>", counts, "<br>")) |> 
   addLegend(pal = pal_uhf_evic2,
             values = uhf_evic$counts,
+            group = "Total Evictions",
             title = "Total Evictions",
             position = "bottomright") 
 
