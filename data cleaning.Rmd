@@ -360,6 +360,33 @@ map_tiles = map_tiles |>
     options = layersControlOptions(collapsed = FALSE)) |>
     hideGroup(c("Total Evictions", paste0("Evictions ", years)))  
 # Hide all layers and legends initially
+
+
+
+######## test for debugging
+
+uhf_evic_2017_test <- uhf_evic_2017 |> 
+  mutate(popup_content = paste(
+    "<b>Borough:</b>", borough, "<br>",
+    "<b>Neighborhood:</b>", uhf_neigh, "<br>",
+    "<b>Number of Evictions:</b>", counts, "<br>",
+    "<b>Year:</b>", 2017
+  ))
+
+
+
+map_tiles_2017_test <- leaflet() |> 
+  addProviderTiles("CartoDB.Positron") |> 
+  addPolygons(
+    data = uhf_evic_2017_test,
+    color = "white",
+    weight = 1,
+    fillColor = ~pal_uhf_evic_2_2017(counts),
+    fillOpacity = 1,
+    label = ~uhf_neigh,
+    popup = ~popup_content
+  )
+
 ```
 
 ## Layer 2: Display statistically significant High-High and Low-Low clusters
