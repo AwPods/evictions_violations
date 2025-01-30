@@ -37,9 +37,31 @@ evic = read.csv ("./data/evictions_for_Qgis.csv")
 
 #### filter
 
-```{r no ejectment}
+```{r filter data}
 evic_wo_eject = evic |>
   filter(!(ejectment == "Ejectment"))
-  
+
+evic_possess = evic_wo_eject |>
+  filter(eviction_legal_possession == "Possession")
+
+evic_evic = evic_wo_eject |>
+  filter(eviction_legal_possession == "Eviction")
+
+# for 2022
+possess_22 = evic_wo_eject |>
+  filter(year == 2022)
+
+evic_22_evic = evic_wo_eject |>
+  filter(year == 2022)
+
+non_eject_22 = evic |>
+  filter(year == 2022)
+```
+
+#### write out csv for GIS
+
+```{r csv writing}
+
+
 ```
 
