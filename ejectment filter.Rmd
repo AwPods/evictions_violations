@@ -1,0 +1,45 @@
+---
+title: "eviction/ejectment"
+output: html_document
+date: "2025-01-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Setup
+
+```{r setup, include = FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(knitr)
+library(sf)
+library(lubridate)
+library(stringr)
+library(leaflet)
+library(shiny)
+library(leaflet.extras)
+library(htmlwidgets)
+library(rgeoda)
+library(RColorBrewer)
+library(classInt)
+```
+
+#### read in dataset
+
+```{r no ejectment}
+evic = read.csv ("./data/evictions_for_Qgis.csv")
+
+```
+
+#### filter
+
+```{r no ejectment}
+evic_wo_eject = evic |>
+  filter(!(ejectment == "Ejectment"))
+  
+```
+
