@@ -141,6 +141,8 @@ uhf_evic = rbind (uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uh
   group_by(borough, uhf_neigh) |>
   summarize(counts = mean(counts, na.rm=TRUE))
 
+st_write(uhf_evic, "./data/uhf_evic.shp")
+
 # check coordinate referencce system
 st_crs(uhf_evic)
 

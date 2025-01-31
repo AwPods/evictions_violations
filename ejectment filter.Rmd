@@ -57,10 +57,36 @@ non_eject_22 = evic_wo_eject |>
 #### write out csv for GIS
 
 ```{r csv writing}
-write.csv(possess_22, "./data/posses_22")
+write.csv(possess_22, "./data/posses_22.csv")
 
 write.csv(evic_22_evic, "./data/evic_22.csv")
 
 write.csv(non_eject_22, "./data/non_eject_22.csv")
+
+write.csv(evic_evic,
+          "./data/evic_w_evictions.csv")
+
+write.csv(evic_possess, "./data/evic_possess.csv")
+
+write.csv(evic_wo_eject, "./data/evic_wo_eject.csv")
+
+```
+
+#### EDA
+
+```{r EDA}
+evic |>
+  group_by(ejectment) |>
+  summarize(Num_evic = n())|>
+  knitr::kable(col.names = c("Ejectment", "Number of evictions"))
+
+evic |>
+  group_by(eviction_legal_possession) |>
+  summarize(num_evic = n()) |>
+  knitr::kable(col.names = c("Legal Possession","Number of Evictions"))
+
+evic |>
+  select(year, neighborhood, eviction_legal_possession) |>
+  filter(eviction_legal_possession == "Eviction")
 ```
 
