@@ -116,7 +116,7 @@ evic = evic |>
 # transform coordinate reference system
 if (!st_crs(evic) == st_crs(uhf)) {
 
-  # Transform evic to match uhf
+# Transform evic to match uhf
 
   uhf_transform <- st_transform(uhf, st_crs(evic)) 
 } 

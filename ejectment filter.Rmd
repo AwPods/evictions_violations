@@ -4,10 +4,6 @@ output: html_document
 date: "2025-01-30"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 #### Setup
 
 ```{r setup, include = FALSE, warning = FALSE}
@@ -48,20 +44,23 @@ evic_evic = evic_wo_eject |>
   filter(eviction_legal_possession == "Eviction")
 
 # for 2022
-possess_22 = evic_wo_eject |>
+possess_22 = evic_possess |>
   filter(year == 2022)
 
-evic_22_evic = evic_wo_eject |>
+evic_22_evic = evic_evic |>
   filter(year == 2022)
 
-non_eject_22 = evic |>
+non_eject_22 = evic_wo_eject |>
   filter(year == 2022)
 ```
 
 #### write out csv for GIS
 
 ```{r csv writing}
+write.csv(possess_22, "./data/posses_22")
 
+write.csv(evic_22_evic, "./data/evic_22.csv")
 
+write.csv(non_eject_22, "./data/non_eject_22.csv")
 ```
 
