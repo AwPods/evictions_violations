@@ -85,6 +85,11 @@ evic |>
   summarize(num_evic = n()) |>
   knitr::kable(col.names = c("Legal Possession","Number of Evictions"))
 
+evic |>
+  group_by(residential_commercial) |>
+  summarize(num_evic = n()) |>
+  knitr::kable (col.names = c("Residential type", "number of evictions"))
+
 uhf_evic = st_read("./data/uhf_evic.shp")
 
 
