@@ -92,9 +92,19 @@ evic |>
 
 uhf_evic = st_read("./data/uhf_evic.shp")
 
+```
 
-uhf_evic |>
-  select(year, uhf_neigh, eviction_legal_possession) %>%
-  filter(eviction_legal_possession == "Eviction")
+### filter commercial buildings
+
+```{r no commercial}
+# only 2022 
+evic_res_22 = evic |>
+  filter(!(residential_commercial == "Commercial")) |>
+  filter(!(ejectment == "Ejectment")) |>
+  filter(year == 2022)
+
+# write out csv for use
+write.csv(evic_res_22, "./data/evic_res_22.csv")
+
 ```
 
