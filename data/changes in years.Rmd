@@ -4,3 +4,70 @@ author: "Zhiyu Wei"
 date: 2024-10-14
 output: html_document
 ---
+
+#### Setup
+
+```{r setup, include = FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(knitr)
+library(sf)
+library(lubridate)
+library(stringr)
+library(leaflet)
+library(shiny)
+library(leaflet.extras)
+library(htmlwidgets)
+library(rgeoda)
+library(RColorBrewer)
+library(classInt)
+```
+
+```{r load data}
+evic = evic |>
+  na.omit()|>
+  st_as_sf(coords = c("longitude","latitude"), crs = 4326)
+
+# transform coordinate reference system
+if (!st_crs(evic) == st_crs(uhf)) {
+
+# Transform evic to match uhf
+
+  uhf_transform <- st_transform(uhf, st_crs(evic)) 
+} 
+
+# loop to create single dataset for counts in every single year:
+years <- 2017:2024
+
+for (year in years) {
+  assign(
+    paste0("uhf_evic_", year),
+    uhf_transform |>
+      na.omit() |>
+      mutate(
+        counts = lengths(st_intersects(geometry, evic |> filter(year == !!year))),
+        year = year
+      )
+  )
+}
+
+# bind all years together
+uhf_evic = rbind (uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024) |>
+  group_by(borough, uhf_neigh) |>
+  summarize(counts = mean(counts, na.rm=TRUE))
+
+st_write(uhf_evic, "./data/uhf_evic_all.shp")
+
+# check coordinate referencce system
+st_crs(uhf_evic)
+
+```
+
+# calculate changes
+
+```{r  }
+
+```
+

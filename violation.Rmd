@@ -1,0 +1,87 @@
+---
+title: "eviction/ejectment"
+output: html_document
+date: "2025-01-30"
+---
+
+
+#### Setup
+
+```{r setup, include = FALSE, warning = FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(knitr)
+library(sf)
+library(lubridate)
+library(stringr)
+library(leaflet)
+library(shiny)
+library(leaflet.extras)
+library(htmlwidgets)
+library(rgeoda)
+library(RColorBrewer)
+library(classInt)
+library(httr)
+library(jsonlite)
+```
+
+### setup API
+
+```{r API Setup}
+
+# NYC Open Data API Endpoint
+base_url <- "https://data.cityofnewyork.us/resource/wvxf-dwi5.json"
+
+# Define chunk size (max allowed is usually 50,000)
+chunk_size <- 50000 
+
+# Initialize empty list to store results
+all_data <- list()
+
+# Loop to fetch data in chunks
+for (offset in seq(0, 859256, by = chunk_size)) {
+  
+  # Construct API query with correct string-based date filtering
+  query <- paste0("?$where=InspectionDate >= '01/01/2022' AND InspectionDate <= '12/31/2022'",
+                  "&$limit=", chunk_size,
+                  "&$offset=", offset)
+
+  # Make the API request
+  response <- GET(paste0(base_url, query))
+
+  # Check if the response is successful
+  if (status_code(response) == 200) {
+    data_chunk <- fromJSON(content(response, "text", encoding = "UTF-8"))
+    
+    # If no more data, stop the loop
+    if (length(data_chunk) == 0) {
+      message("No more data available, stopping loop.")
+      break
+    }
+
+    all_data <- append(all_data, list(data_chunk))
+    
+  } else {
+    message("Error in request: ", status_code(response))
+    break
+  }
+
+  # Sleep to avoid hitting API limits
+  Sys.sleep(1)  
+}
+
+# Combine all chunks into a single data frame
+if (length(all_data) > 0) {
+  final_data <- do.call(rbind, all_data)
+  
+  # Check the number of rows retrieved
+  print(nrow(final_data))
+} else {
+  message("No data retrieved.")
+}
+
+
+```
+
