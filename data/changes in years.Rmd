@@ -26,9 +26,28 @@ library(classInt)
 ```
 
 ```{r load data}
+# read in dataset
+evic = read.csv("./evictions.csv")
+evic =janitor::clean_names(evic)
+# change date format
+evic$executed_date <- mdy(evic$executed_date)
+
+# add year to data 
+evic = evic |>
+  mutate(year = format(executed_date, "%Y"))
+
+
+uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
+uhf = janitor::clean_names(uhf)
+```
+
+```{r create combined dataset}
 evic = evic |>
   na.omit()|>
   st_as_sf(coords = c("longitude","latitude"), crs = 4326)
+
+evic = evic |>
+  filter(ejectment == "Not an Ejectment" & eviction_legal_possession == "Possession" & residential_commercial == "Residential")
 
 # transform coordinate reference system
 if (!st_crs(evic) == st_crs(uhf)) {
@@ -54,20 +73,58 @@ for (year in years) {
 }
 
 # bind all years together
-uhf_evic = rbind (uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024) |>
-  group_by(borough, uhf_neigh) |>
-  summarize(counts = mean(counts, na.rm=TRUE))
-
-st_write(uhf_evic, "./data/uhf_evic_all.shp")
-
-# check coordinate reference system
-st_crs(uhf_evic)
+uhf_evic_year = rbind (uhf_evic_2017, uhf_evic_2018, uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024)
 
 ```
 
 # calculate changes
 
-```{r  }
+```{r separete datasets}
+# Get unique borough names
+boroughs <- unique(uhf_evic_year$borough)
+
+# Loop through each borough and compute yearly eviction counts
+for (b in boroughs) {
+  temp_data <- uhf_evic_year %>%
+    filter(borough == b) %>%  # Filter data for each borough
+    group_by(year) %>%  # Group by year
+    summarise(total_evictions = sum(counts, na.rm = TRUE))  # Sum eviction counts
+  
+  assign(paste0(b, "_evictions"), temp_data)  # Create a dataset with yearly counts
+}
+
+# Loop through each borough: Calculate absolute net percentage change
+for (b in boroughs) {
+  temp_data <- get(paste0(b, "_evictions")) %>%  # Retrieve the dataset
+    arrange(year) %>%  # Sort by year
+    mutate(
+      eviction_change_pct = abs((total_evictions - lag(total_evictions)) / lag(total_evictions) * 100)  # Calculate absolute percentage change
+    )
+
+  assign(paste0(b, "_evictions"), temp_data)  # Overwrite with percentage change included
+}
+```
+
+
+```{r bar chart}
+# Combine all borough datasets into one and remove 2017
+combined_data <- do.call(rbind, lapply(boroughs, function(b) {
+  temp_data <- get(paste0(b, "_evictions"))
+  temp_data$borough <- b  # Add borough as a column
+  temp_data <- filter(temp_data, year != 2017)  # Remove 2017
+  return(temp_data)
+}))
+
+# Create a faceted bar chart
+ggplot(combined_data, aes(x = factor(year), y = eviction_change_pct, fill = borough)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Eviction Change Percentage by Year",
+       x = "Year",
+       y = "Percentage Change (%)") +
+  facet_wrap(~borough, scales = "free_y") +  # Create separate panels for each borough
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 ```
 
