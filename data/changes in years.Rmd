@@ -164,7 +164,7 @@ for (year in years) {
     uhf_transform |>
       na.omit() |>
       mutate(
-        counts = lengths(st_intersects(geometry, evic |> filter(year == !!year))),
+        counts = lengths(st_intersects(geometry, evic_e |> filter(year == !!year))),
         year = year
       )
   )
@@ -172,6 +172,9 @@ for (year in years) {
 
 # bind all years together
 uhf_no_possess_all = rbind (uhf_no_posession2017, uhf_no_posession2018, uhf_no_posession2019, uhf_no_posession2020, uhf_no_posession2021, uhf_no_posession2022,uhf_no_posession2023, uhf_no_posession2024)
+
+st_write(uhf_no_possess_all, "uhf_no_p.shp")
+
 ```
 
 # changes in evictions and posession tables
