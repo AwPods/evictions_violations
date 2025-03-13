@@ -47,7 +47,7 @@ evic = evic |>
   st_as_sf(coords = c("longitude","latitude"), crs = 4326)
 
 evic = evic |>
-  filter(ejectment == "Not an Ejectment" & eviction_legal_possession == "Possession" & residential_commercial == "Residential")
+  filter(ejectment == "Not an Ejectment" & residential_commercial == "Residential")
 
 # transform coordinate reference system
 if (!st_crs(evic) == st_crs(uhf)) {
@@ -125,6 +125,30 @@ ggplot(combined_data, aes(x = factor(year), y = eviction_change_pct, fill = boro
   facet_wrap(~borough, scales = "free_y") +  # Create separate panels for each borough
   theme(plot.title = element_text(hjust = 0.5))
 
+
+```
+
+# charts with numbers that show the changes (positive and negative)
+
+# substance abuse (by neighborhood)
+
+# health related datasets 
+
+# map with five years of data vs. 2022 (map in QGIS)
+
+```{r write st file, warning = FALSE}
+st_write(uhf_evic_year, "filtered_eviction_all.shp")
+
+st_write(uhf_evic_2022, "filtered_eviction_22.shp")
+```
+
+# changes in evictions and posession tables
+
+```{r difference in eviction and posession}
+evic |> 
+  group_by(year, eviction_legal_possession) |> 
+  summarize(Num_evic = n(), .groups = "drop") |> 
+  print()
 
 ```
 
