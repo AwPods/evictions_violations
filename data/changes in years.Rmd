@@ -137,9 +137,41 @@ ggplot(combined_data, aes(x = factor(year), y = eviction_change_pct, fill = boro
 # map with five years of data vs. 2022 (map in QGIS)
 
 ```{r write st file, warning = FALSE}
-st_write(uhf_evic_year, "filtered_eviction_all.shp")
+st_write(uhf_evic_year, "pe_eviction_all.shp")
 
-st_write(uhf_evic_2022, "filtered_eviction_22.shp")
+st_write(uhf_evic_2022, "pe_eviction_22.shp")
+
+
+# eviction only
+
+evic_e = evic |>
+  filter(eviction_legal_possession == "Eviction")
+
+# transform coordinate reference system
+if (!st_crs(evic) == st_crs(uhf)) {
+
+# Transform evic to match uhf
+
+  uhf_transform <- st_transform(uhf, st_crs(evic_e)) 
+} 
+
+# loop to create single dataset for counts in every single year:
+years <- 2017:2024
+
+for (year in years) {
+  assign(
+    paste0("uhf_no_posession", year),
+    uhf_transform |>
+      na.omit() |>
+      mutate(
+        counts = lengths(st_intersects(geometry, evic |> filter(year == !!year))),
+        year = year
+      )
+  )
+}
+
+# bind all years together
+uhf_no_possess_all = rbind (uhf_no_posession2017, uhf_no_posession2018, uhf_no_posession2019, uhf_no_posession2020, uhf_no_posession2021, uhf_no_posession2022,uhf_no_posession2023, uhf_no_posession2024)
 ```
 
 # changes in evictions and posession tables
