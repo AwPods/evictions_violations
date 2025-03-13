@@ -185,5 +185,13 @@ evic |>
   summarize(Num_evic = n(), .groups = "drop") |> 
   print()
 
+evic |> 
+  select(-geometry) |>
+  group_by(year, eviction_legal_possession) |> 
+  summarize(Num_evic = n(), .groups = "drop") |> 
+  setNames(c("Year", "Possession/Eviction", "Number of Evictions")) |> 
+  knitr::kable()
+
+
 ```
 
