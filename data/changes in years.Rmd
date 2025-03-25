@@ -195,3 +195,13 @@ evic |>
 
 ```
 
+
+# write st file for parks
+```{r park st file}
+park = read.csv("./Parks_Properties_20250325.csv")
+
+st_write(park, "nyc_park.shp")
+
+```
+
+
