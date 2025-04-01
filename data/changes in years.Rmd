@@ -199,7 +199,7 @@ evic |>
 
 # write st file for community gardens
 ```{r community garden st file}
-garden = read.csv("./GreenThumb_Garden_Info_20250327.csv")
+garden = read.csv("./GreenThumb_Garden_Info_20250327.csv") 
 
 ```
 
