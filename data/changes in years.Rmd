@@ -33,14 +33,37 @@ evic =janitor::clean_names(evic)
 # change date format
 evic$executed_date <- mdy(evic$executed_date)
 
+evic <- evic |>
+  filter(ejectment == "Not an Ejectment", residential_commercial == "Residential")
+
+
 # add year to data 
 evic = evic |>
   mutate(year = format(executed_date, "%Y"))
 
 
+filter_evic_22 = evic |>
+  filter(year == 2022)
+
+
+write.csv(
+  st_drop_geometry(filter_evic_22),
+  file = "map_evic_22.csv",
+  row.names = FALSE
+)
+
+
+
 uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
 uhf = janitor::clean_names(uhf)
+
+
+
+
 ```
+
+
+
 ```{r set projection}
 # ESPG:2263 – NAD83 / New York Long Island.
 
