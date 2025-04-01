@@ -41,34 +41,33 @@ evic = evic |>
 uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
 uhf = janitor::clean_names(uhf)
 ```
+```{r set projection}
+# ESPG:2263 – NAD83 / New York Long Island.
 
-```{r create combined dataset}
-evic = evic |>
-  na.omit()|>
-  st_as_sf(coords = c("longitude","latitude"), crs = 4326)
+# Convert to sf with correct original CRS (WGS84) then transform
+evic <- evic |>
+  na.omit() |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = 2263)
 
-evic = evic |>
-  filter(ejectment == "Not an Ejectment" & residential_commercial == "Residential")
+uhf <- uhf |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = 2263)
 
-# transform coordinate reference system
-if (!st_crs(evic) == st_crs(uhf)) {
+# Filter evic
+evic <- evic |>
+  filter(ejectment == "Not an Ejectment", residential_commercial == "Residential")
 
-# Transform evic to match uhf
-
-  uhf_transform <- st_transform(uhf, st_crs(evic)) 
-} 
-
-# loop to create single dataset for counts in every single year:
+# Loop through years
 years <- 2017:2024
 
-for (year in years) {
+for (.y in years) {
   assign(
-    paste0("uhf_evic_", year),
-    uhf_transform |>
-      na.omit() |>
+    paste0("uhf_evic_", .y),
+    uhf |>
       mutate(
-        counts = lengths(st_intersects(geometry, evic |> filter(year == !!year))),
-        year = year
+        counts = lengths(st_intersects(geometry, evic |> filter(year == .y))),
+        year = .y
       )
   )
 }
@@ -77,6 +76,7 @@ for (year in years) {
 uhf_evic_year = rbind (uhf_evic_2017, uhf_evic_2018, uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024)
 
 ```
+
 
 # calculate changes
 
@@ -197,13 +197,9 @@ evic |>
 ```
 
 
-# write st file for parks
-```{r park st file}
-park = read.csv("./Parks_Properties_20250325.csv")
-
-gdf = st_as_sf(park, wkt = "multipolygon", crs = 4326)
-
-st_write(gdf, "NY_parks.shp")
+# write st file for community gardens
+```{r community garden st file}
+garden = read.csv("./GreenThumb_Garden_Info_20250327.csv")
 
 ```
 
