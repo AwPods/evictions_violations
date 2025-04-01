@@ -109,30 +109,4 @@ write.csv(evic_res_22, "./data/evic_res_22.csv")
 ```
 
 
-### shooting data
-
-```{r shooting data}
-shooting = read.csv("./data/NYPD_Shooting_Incident_Data__Historic__20250204.csv")
-
-shooting = janitor::clean_names(shooting)
-
-#change data format and data type
-shooting$occur_date <- mdy(shooting$occur_date)
-
-#make year a single column
-shooting = shooting |>
-  mutate(year = format(occur_date, "%Y"))
-
-# filter out year
-shooting_22 = shooting |>
-  filter(year == 2022)
-
-# only want the entries with long and lat
-shooting_22 = shooting_22 |>
-  filter(!is.na(latitude))
-
-# write out csv
-write.csv(shooting_22, "./data/shooting_22.csv")
-
-```
 

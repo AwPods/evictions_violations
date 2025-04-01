@@ -14,6 +14,7 @@ library(ggplot2)
 library(patchwork)
 library(knitr)
 library(sf)
+library(readr)
 library(lubridate)
 library(stringr)
 library(leaflet)
@@ -200,7 +201,9 @@ evic |>
 ```{r park st file}
 park = read.csv("./Parks_Properties_20250325.csv")
 
-st_write(park, "nyc_park.shp")
+gdf = st_as_sf(park, wkt = "multipolygon", crs = 4326)
+
+st_write(gdf, "NY_parks.shp")
 
 ```
 
