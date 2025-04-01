@@ -58,6 +58,8 @@ uhf <- uhf |>
 evic <- evic |>
   filter(ejectment == "Not an Ejectment", residential_commercial == "Residential")
 
+evic <- st_transform(evic, st_crs(uhf))
+
 # Loop through years
 years <- 2017:2024
 
@@ -74,6 +76,9 @@ for (.y in years) {
 
 # bind all years together
 uhf_evic_year = rbind (uhf_evic_2017, uhf_evic_2018, uhf_evic_2019, uhf_evic_2020, uhf_evic_2021, uhf_evic_2022, uhf_evic_2023, uhf_evic_2024)
+
+
+
 
 ```
 
