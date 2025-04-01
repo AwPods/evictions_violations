@@ -41,10 +41,13 @@ evic <- evic |>
 evic = evic |>
   mutate(year = format(executed_date, "%Y"))
 
-
 filter_evic_22 = evic |>
   filter(year == 2022)
 
+filter_evic_22 = filter_evic_22 |>
+  na.omit() |>
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
+  st_transform(crs = 2263)
 
 write.csv(
   st_drop_geometry(filter_evic_22),
@@ -53,12 +56,8 @@ write.csv(
 )
 
 
-
 uhf = st_read("./UHF_42_DOHMH_2009/UHF_42_DOHMH_2009.shp")
 uhf = janitor::clean_names(uhf)
-
-
-
 
 ```
 
