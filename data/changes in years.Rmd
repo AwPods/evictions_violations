@@ -31,9 +31,9 @@ library(classInt)
 evic = read.csv("./evictions.csv")
 evic =janitor::clean_names(evic)
 # change date format
-evic$executed_date <- mdy(evic$executed_date)
+evic$executed_date = mdy(evic$executed_date)
 
-evic <- evic |>
+evic = evic |>
   filter(ejectment == "Not an Ejectment", residential_commercial == "Residential")
 
 
@@ -61,29 +61,27 @@ uhf = janitor::clean_names(uhf)
 
 ```
 
-
-
 ```{r set projection}
 # ESPG:2263 – NAD83 / New York Long Island.
 
 # Convert to sf with correct original CRS (WGS84) then transform
-evic <- evic |>
+evic = evic |>
   na.omit() |>
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
   st_transform(crs = 2263)
 
-uhf <- uhf |>
+uhf = uhf |>
   st_as_sf(coords = c("longitude", "latitude"), crs = 4326) |>
   st_transform(crs = 2263)
 
 # Filter evic
-evic <- evic |>
+evic = evic |>
   filter(ejectment == "Not an Ejectment", residential_commercial == "Residential")
 
-evic <- st_transform(evic, st_crs(uhf))
+evic = st_transform(evic, st_crs(uhf))
 
 # Loop through years
-years <- 2017:2024
+years = 2017:2024
 
 for (.y in years) {
   assign(
@@ -104,18 +102,17 @@ uhf_evic_year = rbind (uhf_evic_2017, uhf_evic_2018, uhf_evic_2019, uhf_evic_202
 
 ```
 
-
 # calculate changes
 
 ```{r separete datasets}
 # Get unique borough names
-boroughs <- unique(uhf_evic_year$borough)
+boroughs = unique(uhf_evic_year$borough)
 
 # Loop through each borough and compute yearly eviction counts
 for (b in boroughs) {
-  temp_data <- uhf_evic_year %>%
-    filter(borough == b) %>%  # Filter data for each borough
-    group_by(year) %>%  # Group by year
+  temp_data = uhf_evic_year |>
+    filter(borough == b) |>  # Filter data for each borough
+    group_by(year) |>  # Group by year
     summarise(total_evictions = sum(counts, na.rm = TRUE))  # Sum eviction counts
   
   assign(paste0(b, "_evictions"), temp_data)  # Create a dataset with yearly counts
@@ -123,8 +120,8 @@ for (b in boroughs) {
 
 # Loop through each borough: Calculate absolute net percentage change
 for (b in boroughs) {
-  temp_data <- get(paste0(b, "_evictions")) %>%  # Retrieve the dataset
-    arrange(year) %>%  # Sort by year
+  temp_data = get(paste0(b, "_evictions")) |>  # Retrieve the dataset
+    arrange(year) |>  # Sort by year
     mutate(
       eviction_change_pct = abs((total_evictions - lag(total_evictions)) / lag(total_evictions) * 100)  # Calculate absolute percentage change
     )
@@ -133,13 +130,12 @@ for (b in boroughs) {
 }
 ```
 
-
 ```{r bar chart}
 # Combine all borough datasets into one and remove 2017
-combined_data <- do.call(rbind, lapply(boroughs, function(b) {
-  temp_data <- get(paste0(b, "_evictions"))
-  temp_data$borough <- b  # Add borough as a column
-  temp_data <- filter(temp_data, year != 2017)  # Remove 2017
+combined_data = do.call(rbind, lapply(boroughs, function(b) {
+  temp_data = get(paste0(b, "_evictions"))
+  temp_data$borough = b  # Add borough as a column
+  temp_data = filter(temp_data, year != 2017)  # Remove 2017
   return(temp_data)
 }))
 
@@ -160,7 +156,7 @@ ggplot(combined_data, aes(x = factor(year), y = eviction_change_pct, fill = boro
 
 # substance abuse (by neighborhood)
 
-# health related datasets 
+# health related datasets
 
 # map with five years of data vs. 2022 (map in QGIS)
 
@@ -180,11 +176,11 @@ if (!st_crs(evic) == st_crs(uhf)) {
 
 # Transform evic to match uhf
 
-  uhf_transform <- st_transform(uhf, st_crs(evic_e)) 
+  uhf_transform = st_transform(uhf, st_crs(evic_e)) 
 } 
 
 # loop to create single dataset for counts in every single year:
-years <- 2017:2024
+years = 2017:2024
 
 for (year in years) {
   assign(
@@ -223,11 +219,48 @@ evic |>
 
 ```
 
-
 # write st file for community gardens
-```{r community garden st file}
-garden = read.csv("./GreenThumb_Garden_Info_20250327.csv") 
 
+```{r community garden st file}
+# 1. Read the CSV as an sf object using the geometry column
+gardens = read.csv("GreenThumb_Garden_Info_20250327.csv")
+
+st_crs(gardens)
+# 2. Convert WKT to sf geometry (assumes geometry column is named "geometry")
+gardens_sf = st_as_sf(gardens, wkt = "multipolygon", crs = 4326)  # assuming original CRS is WGS84
+
+# 3. Transform to EPSG:2263 (NAD83 / NY Long Island)
+gardens_2263 = st_transform(gardens_sf, crs = 2263)
+
+st_write(gardens_2263, "community_gardens_2263.shp")
 ```
 
 
+```{r tidycensus}
+library(tidycensus)
+
+nyc_pop = get_acs(
+  geography = "tract",
+  variables = "B01003_001",  # total population
+  state = "NY",
+  county = c("Bronx", "Kings", "New York", "Queens", "Richmond"),
+  geometry = TRUE,
+  year = 2022
+)
+
+uhf42 = uhf |>
+  st_transform(st_crs(nyc_pop))
+
+
+# Spatial intersection
+pop_with_uhf = st_join(nyc_pop, uhf42, join = st_intersects)
+
+# Aggregate population by UHF42
+pop_by_uhf = pop_with_uhf |>
+  group_by(uhfcode, uhf_neigh) |>
+  summarize(total_pop = sum(estimate, na.rm = TRUE))
+
+# remove the 44th row
+pop_by_uhf = pop_by_uhf[-44, ]
+
+```
