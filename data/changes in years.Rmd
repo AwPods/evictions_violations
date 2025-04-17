@@ -263,4 +263,6 @@ pop_by_uhf = pop_with_uhf |>
 # remove the 44th row
 pop_by_uhf = pop_by_uhf[-44, ]
 
+
+st_write(pop_by_uhf, "pop_by_uhf(22).shp")
 ```
