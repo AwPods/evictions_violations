@@ -266,3 +266,23 @@ pop_by_uhf = pop_by_uhf[-44, ]
 
 st_write(pop_by_uhf, "pop_by_uhf(22).shp")
 ```
+
+# count gardens
+
+```{r count gardens}
+# Check CRS of both datasets
+st_crs(pop_by_uhf)
+
+# If they differ, transform gardens to match pop_by_uhf
+
+# Calculate intersections
+intersections = st_intersects(uhf, gardens_2263)
+
+# Count the number of gardens in each UHF42 polygon
+uhf$garden_count = lengths(intersections)
+
+# write shapefile
+st_write(uhf, "num_cg_uhf.shp")
+
+```
+
