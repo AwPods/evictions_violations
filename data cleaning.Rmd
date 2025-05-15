@@ -25,6 +25,22 @@ library(RColorBrewer)
 library(classInt)
 ```
 
+```{r shooting data}
+library(lubridate)
+
+# Load the dataset
+shooting <- read.csv("./data/NYPD_Shooting_Incident_Data__Historic__20250204.csv")
+
+# Convert OCCUR_DATE to Date format and extract year
+shooting$OCCUR_DATE <- mdy(shooting$OCCUR_DATE)
+shooting$YEAR <- year(shooting$OCCUR_DATE)
+
+# Filter for incidents that occurred in 2022
+shooting_2022 <- subset(shooting, YEAR == 2022)
+
+write.csv(shooting_2022, "./data/shooting_2022.csv", row.names = FALSE)
+
+```
 
 ```{r load evictions data}
 evic = read.csv("./data/evictions.csv")
